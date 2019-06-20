@@ -122,39 +122,32 @@ ggplot(df_dataV2_1, aes(data$V2)) +
   theme(axis.title = element_text(family = "malgun", face="bold", size=15))
 
 # 예제 2-3 원도표
+library(RColorBrewer)
+
 pie(table(data$V4), main = '학력수준별 비중', cex = 0.8)
 table(data$V4)
 
 df_dataV4 <- as.data.frame(table(data$V4))
+df_dataV4$Var1 <- droplevels(df_dataV4$Var1)
 str(df_dataV4)
 head(df_dataV4)
+summary(data)
 options(digits = 1)
 
 df_dataV4 <- df_dataV4 %>%
   mutate(pct = Freq / sum(Freq) * 100) %>%
   mutate(ylabel = paste(Var1, '\n', '(', sprintf("%4.1f", pct), '%', ')', sep = '' )) %>%
   mutate(ypos = cumsum(pct) - 0.5 * pct) %>%
-  arrange(desc(Freq))
+  arrange((Freq))
 
+df_dataV4$Var1 <- factor(df_dataV4$Var1, levels = c('고등학교', '대학-4년제 이상', '초등학교', '중학교', '안 받았음', '대학-4년제 미만', '석사과정', '박사과정'), ordered = T)
+
+myPal <- brewer.pal(8, 'Dark2')
+brewer.pal.info
+display.brewer.all()
 ggplot(df_dataV4, aes(x = '', y = pct, fill = Var1)) + 
   geom_bar(stat = 'identity') + 
-  geom_text(aes(y = ypos, label = ylabel), color = 'black')
-  
-  
-  
-  coord_polar(theta = 'y')
-
-
-df_top10 <- df_top10 %>%
-  mutate(pct = Freq / sum(Freq) * 100) %>%
-  mutate(ylabel = paste(keyword, "\n", "(", sprintf("%4.1f", pct), '%',")", sep = '')) %>%
-  mutate(ypos = cumsum(pct) - 0.5 * pct) %>%
-  arrange(desc(Freq)) 
-
-ggplot(df_top10, aes(x='', y=pct, fill=keyword)) +
-  geom_bar(width=1, stat='identity') +
-  ggtitle("Hip-hop Key word") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  coord_polar("y", start = 0) +
-  geom_text(aes(y=ypos, label=ylabel), color = 'black')
+  geom_text(aes(y = ypos, label = ylabel), color = 'black') +
+  coord_polar(theta = 'y') +
+  scale_fill_brewer(palette = 'Set2')
 
