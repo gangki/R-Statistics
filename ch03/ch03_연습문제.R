@@ -7,16 +7,32 @@
 # 4) 주사위를 한 번 던졌을 때, 숫자 2가 나오는지를 체크한다.
 
 # 정답 4번. 성공(2가 나오는 경우)과 실패(2가 안나오는 경우)의 두 가지 결과가 나타나는 확률 실험
+# 정답 2번. 성공(여자), 실패(남자)인 경우 
 
 # 2. 한 축구 선수가 페널티킥을 차면 5번 중 4번을 성공한다고 한다.
 # 이 선수가 10번의 페널티킥을 차서 7번 성공할 확률을 구하시오.
-
 n <- 10
 p <- 4/5
-x <- 0:n
+x <- 0:10
+options(digits = 3)
 
 answer2 <- dbinom(7, size = n, prob = p)
 answer2
+
+px <- dbinom(x, size = n, prob = p)
+#차트1
+plot(x, px, type = 's', xlab = '성공 횟수(x)', ylab = '확률(P[X=x])',
+     main = 'B(10, 4/5)')
+#차트2
+plot(x, px, type = 'h', xlab = '성공 횟수(x)', ylab = '확률(P[X=x])',
+     main = 'B(10, 4/5)', lwd = 10, col = 'blue')
+#ggplot
+library(ggplot2)
+
+df_binom <- data.frame(x, px) #데이터프레임 변환
+ggplot(df_binom, aes(x, px)) +
+  geom_bar(stat = 'identity', fill = 'mediumpurple', color = 'black', width = 1)
+  
 
 # 3. A라는 회사는 스마트폰의 한 부품을 만드는 회사로, 이 A사의 불량률은 5%로 알려져 있다.
 # 이 회사의 제품 20개를 조사했을 때, 불량이 2개 이하로 나올 확률을 구하시오.
@@ -28,7 +44,7 @@ px <- dbinom(x, size = n, prob = p)
 
 answer3 <- pbinom(2, size = n, prob = p)
 answer3
-sum(px[1:3]) # 검증 [0.9245]
+sum(px[1:3])
 
 # 4. 어떤 희귀 바이러스에 감염되었을 때, 회복할 수 있는 치료율은 20%라고 한다.
 # 이 바이러스에 감염된 환자 20명을 치료했을 때, 적어도 2명 이상은 회복될 확률을 구하시오.
